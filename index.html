@@ -2,38 +2,45 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Calculadora 2º ESO</title>
+    <title>Calculadora Matemáticas 2º ESO</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #eef2f7; display: flex; justify-content: center; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px; }
-        label { display: block; margin-top: 15px; font-weight: 600; color: #555; font-size: 0.9em; }
-        input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; transition: border 0.3s; }
-        input:focus { border-color: #007bff; outline: none; }
-        small { color: #888; font-size: 0.8em; }
-        button { background: #007bff; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 20px; font-size: 1em; }
-        button:hover { background: #0056b3; }
-        #resultado { margin-top: 20px; padding: 15px; border-radius: 6px; text-align: center; font-size: 1.2em; font-weight: bold; display: none; }
-        .aprobado { background: #d4edda; color: #155724; display: block !important; }
-        .suspenso { background: #f8d7da; color: #721c24; display: block !important; }
+        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f2f5; display: flex; justify-content: center; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { color: #1a73e8; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .grupo { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; }
+        input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input:focus { border-color: #1a73e8; outline: none; }
+        small { color: #666; font-size: 0.85em; display: block; margin-bottom: 5px; }
+        button { background: #1a73e8; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; transition: 0.3s; }
+        button:hover { background: #1557b0; }
+        #resultado { margin-top: 25px; padding: 20px; border-radius: 10px; text-align: center; font-size: 1.4em; font-weight: bold; display: none; }
+        .aprobado { background: #e6f4ea; color: #1e8e3e; display: block !important; border: 1px solid #1e8e3e; }
+        .suspenso { background: #fce8e6; color: #d93025; display: block !important; border: 1px solid #d93025; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>Matemáticas</h2>
+        <h2>Matemáticas 2º ESO</h2>
         
-        <label>Notas de Cuaderno (10%):</label>
-        <small>Separa con comas: 8, 7.5, 9</small>
-        <input type="text" id="cuaderno" placeholder="Ej: 5, 6.5">
+        <div class="grupo">
+            <label>Notas de Cuaderno (10%)</label>
+            <small>Media de las notas: 8, 9, 10...</small>
+            <input type="text" id="cuaderno" placeholder="Ej: 7, 8">
+        </div>
         
-        <label>Notas de Parciales (40%):</label>
-        <small>Separa con comas: 4, 6, 5</small>
-        <input type="text" id="parciales" placeholder="Ej: 7, 8">
+        <div class="grupo">
+            <label>Exámenes Parciales (15% cada uno)</label>
+            <small>Cada nota cuenta un 15%: 5, 7, 6...</small>
+            <input type="text" id="parciales" placeholder="Ej: 6, 4.5">
+        </div>
         
-        <label>Notas Examen Trimestral (50%):</label>
-        <small>Si es uno solo, pon el número</small>
-        <input type="text" id="trimestral" placeholder="Ej: 6">
+        <div class="grupo">
+            <label>Examen Trimestral</label>
+            <small>Introduce la nota del examen final</small>
+            <input type="text" id="trimestral" placeholder="Ej: 7">
+        </div>
 
         <button onclick="calcular()">Calcular Nota Final</button>
         
@@ -41,40 +48,38 @@
     </div>
 
     <script>
-        // Función para convertir el texto "5, 6, 7" en una media (6)
-        function obtenerMedia(idInput) {
-            const texto = document.getElementById(idInput).value;
-            if (!texto.trim()) return 0;
-
-            // Divide el texto por comas, quita espacios y convierte a números
-            const notas = texto.split(',')
-                               .map(n => parseFloat(n.trim()))
-                               .filter(n => !isNaN(n));
-
-            if (notas.length === 0) return 0;
-            const suma = notas.reduce((acc, n) => acc + n, 0);
-            return suma / notas.length;
+        function procesarNotas(id) {
+            const texto = document.getElementById(id).value;
+            return texto.split(',')
+                        .map(n => parseFloat(n.trim()))
+                        .filter(n => !isNaN(n));
         }
 
         function calcular() {
-            const mediaCuaderno = obtenerMedia('cuaderno');
-            const mediaParciales = obtenerMedia('parciales');
-            const mediaTrimestral = obtenerMedia('trimestral');
-
-            // Cálculo final basado en los pesos (0.1, 0.4, 0.5)
-            const notaFinal = (mediaCuaderno * 0.10) + 
-                              (mediaParciales * 0.40) + 
-                              (mediaTrimestral * 0.50);
-
-            const divResultado = document.getElementById('resultado');
-            divResultado.innerHTML = `Nota Final: ${notaFinal.toFixed(2)}`;
+            // 1. Media de Cuaderno
+            const notasCuaderno = procesarNotas('cuaderno');
+            const mediaCuaderno = notasCuaderno.length > 0 ? 
+                (notasCuaderno.reduce((a, b) => a + b, 0) / notasCuaderno.length) : 0;
             
-            // Cambiar color según si aprueba o no
-            if (notaFinal >= 5) {
-                divResultado.className = 'aprobado';
-            } else {
-                divResultado.className = 'suspenso';
-            }
+            // 2. Suma de Parciales (15% cada uno)
+            const notasParciales = procesarNotas('parciales');
+            const puntosParciales = notasParciales.reduce((acc, nota) => acc + (nota * 0.15), 0);
+
+            // 3. Trimestral (Calculamos cuánto peso queda)
+            // Si hay 3 parciales (45%) + cuaderno (10%) = 55%. El trimestral valdría 45%
+            const pesoOcupado = 0.10 + (notasParciales.length * 0.15);
+            const pesoTrimestral = Math.max(0, 1 - pesoOcupado);
+            
+            const notaTrimestral = parseFloat(document.getElementById('trimestral').value) || 0;
+            const puntosTrimestral = notaTrimestral * pesoTrimestral;
+
+            // Nota Final
+            const notaFinal = (mediaCuaderno * 0.10) + puntosParciales + puntosTrimestral;
+
+            const divRes = document.getElementById('resultado');
+            divRes.innerHTML = `Nota Final: ${notaFinal.toFixed(2)}<br><small style="font-size:0.6em">Cuaderno: 10% | Parciales: ${notasParciales.length * 15}% | Trimestral: ${(pesoTrimestral * 100).toFixed(0)}%</small>`;
+            
+            divRes.className = notaFinal >= 5 ? 'aprobado' : 'suspenso';
         }
     </script>
 </body>
