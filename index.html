@@ -1,0 +1,44 @@
+// Estructura de datos para las asignaturas de 2º ESO
+const sistemaNotas = {
+    mates: {
+        nombre: "Matemáticas",
+        notas: {
+            cuaderno: [],
+            parciales: [],
+            trimestral: []
+        },
+        // Aquí ajustaremos los pesos cuando me los digas
+        pesos: { cuaderno: 0.10, parciales: 0.40, trimestral: 0.50 } 
+    },
+    lengua: { nombre: "Lengua y Literatura", notas: {} },
+    historia: { nombre: "Geografía e Historia", notas: {} }
+};
+
+// Función para calcular la media de un array de notas
+const calcularMedia = (lista) => {
+    if (lista.length === 0) return 0;
+    const suma = lista.reduce((acc, nota) => acc + nota, 0);
+    return suma / lista.length;
+};
+
+// Función principal para obtener la nota final de Mates
+function calcularNotaFinalMates() {
+    const asignatura = sistemaNotas.mates;
+    
+    const mediaCuaderno = calcularMedia(asignatura.notas.cuaderno);
+    const mediaParciales = calcularMedia(asignatura.notas.parciales);
+    const mediaTrimestral = calcularMedia(asignatura.notas.trimestral);
+
+    const notaFinal = (mediaCuaderno * asignatura.pesos.cuaderno) +
+                      (mediaParciales * asignatura.pesos.parciales) +
+                      (mediaTrimestral * asignatura.pesos.trimestral);
+
+    return notaFinal.toFixed(2);
+}
+
+// EJEMPLO DE USO:
+sistemaNotas.mates.notas.cuaderno.push(8, 9); // Notas de clase
+sistemaNotas.mates.notas.parciales.push(6, 7.5); // Exámenes cortos
+sistemaNotas.mates.notas.trimestral.push(7); // Examen final
+
+console.log(`La nota final de ${sistemaNotas.mates.nombre} es: ${calcularNotaFinalMates()}`);
