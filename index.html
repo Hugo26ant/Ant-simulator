@@ -2,51 +2,141 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Calculadora Mates</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Notas - MultiApp</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f2f5; display: flex; justify-content: center; }
+        :root {
+            --primary-blue: #1a73e8;
+            --bg-gray: #f0f2f5;
+        }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-gray); }
+        
+        /* Header y Menú */
+        header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .menu-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-blue);
+            padding: 5px;
+            z-index: 1001;
+        }
+
+        /* Sidebar (Menú lateral) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 250px;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .sidebar.active { right: 0; }
+        .sidebar h3 { border-bottom: 1px solid #eee; padding-bottom: 10px; color: #444; }
+        .sidebar ul { list-style: none; padding: 0; }
+        .sidebar li { 
+            padding: 15px; 
+            border-bottom: 1px solid #f9f9f9; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .sidebar li:hover { background: #f0f7ff; color: var(--primary-blue); }
+
+        /* Contenedor Principal */
+        .container { display: flex; justify-content: center; padding: 40px 20px; }
         .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        h2 { color: #1a73e8; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-top: 0; }
+        h2 { color: var(--primary-blue); text-align: center; margin-top: 0; }
+        
         .grupo { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 8px; color: #444; }
         input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        input:focus { border-color: #1a73e8; outline: none; }
-        button { background: #1a73e8; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        
+        button { background: var(--primary-blue); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        
         #resultado { margin-top: 25px; padding: 20px; border-radius: 10px; text-align: center; font-size: 1.4em; font-weight: bold; display: none; }
-        .aprobado { background: #e6f4ea; color: #1e8e3e; display: block !important; border: 1px solid #1e8e3e; }
-        .suspenso { background: #fce8e6; color: #d93025; display: block !important; border: 1px solid #d93025; }
+        .aprobado { background: #e6f4ea; color: #1e8e3e; border: 1px solid #1e8e3e; display: block !important; }
+        .suspenso { background: #fce8e6; color: #d93025; border: 1px solid #d93025; display: block !important; }
+
+        /* Overlay para cerrar menú */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 999;
+        }
+        .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Mates</h2>
-    
-    <div class="grupo">
-        <label>Cuaderno</label>
-        <input type="text" id="cuaderno">
-    </div>
-    
-    <div class="grupo">
-        <label>Parciales</label>
-        <input type="text" id="parciales">
-    </div>
-    
-    <div class="grupo">
-        <label>Trimestral</label>
-        <input type="text" id="trimestral">
-    </div>
+<header>
+    <div style="font-weight: bold; color: #555;">Calculadora Pro</div>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+</header>
 
-    <button onclick="calcular()">Calcular Nota Final</button>
-    
-    <div id="resultado"></div>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <h3>Menú</h3>
+    <ul>
+        <li onclick="alert('Próximamente: Historial de notas')">📋 Historial</li>
+        <li style="background: #eee; font-weight: bold;">Asignaturas:</li>
+        <li onclick="cambiarAsignatura('Mates')">📐 Matemáticas</li>
+        <li onclick="alert('Pásame los criterios de la siguiente asignatura')">➕ Añadir Nueva...</li>
+    </ul>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <h2 id="tituloAsignatura">Mates</h2>
+        
+        <div class="grupo">
+            <label>Cuaderno</label>
+            <input type="text" id="cuaderno">
+        </div>
+        
+        <div class="grupo">
+            <label>Parciales</label>
+            <input type="text" id="parciales">
+        </div>
+        
+        <div class="grupo">
+            <label>Trimestral</label>
+            <input type="text" id="trimestral">
+        </div>
+
+        <button onclick="calcular()">Calcular Nota Final</button>
+        
+        <div id="resultado"></div>
+    </div>
 </div>
 
 <script>
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    function cambiarAsignatura(nombre) {
+        document.getElementById('tituloAsignatura').innerText = nombre;
+        toggleMenu();
+        // Aquí limpiaremos campos o cambiaremos lógica según la asignatura
+    }
+
     function procesarNotas(id) {
         const input = document.getElementById(id).value.trim();
         if (!input) return [];
-        // Separar por espacios, permite usar punto o coma para decimales
         return input.split(/\s+/).map(n => parseFloat(n.replace(',', '.'))).filter(n => !isNaN(n));
     }
 
@@ -55,17 +145,15 @@
         const parciales = procesarNotas('parciales');
         const trimestral = procesarNotas('trimestral');
 
-        // REGLAS: 10% cada cuaderno, 15% cada parcial, 50% trimestral
+        // Lógica actual de Mates
         const puntosCuaderno = cuaderno.reduce((acc, n) => acc + (n * 0.10), 0);
         const puntosParciales = parciales.reduce((acc, n) => acc + (n * 0.15), 0);
-        
-        const notaFinalTrim = trimestral.length > 0 ? trimestral[0] : 0;
-        const puntosTrimestral = notaFinalTrim * 0.50;
+        const notaTrim = trimestral.length > 0 ? trimestral[0] : 0;
+        const puntosTrimestral = notaTrim * 0.50;
 
         const total = puntosCuaderno + puntosParciales + puntosTrimestral;
 
         const divRes = document.getElementById('resultado');
-        divRes.style.display = 'block';
         divRes.innerHTML = `Nota Final: ${total.toFixed(2)}`;
         divRes.className = total >= 5 ? 'aprobado' : 'suspenso';
     }
